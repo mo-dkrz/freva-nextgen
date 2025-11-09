@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 
 import xarray as xr
 
-from .backend import posix_and_cloud
+from .posix import posix_and_cloud
 
 
 def load_data(inp_path: str) -> xr.Dataset:
