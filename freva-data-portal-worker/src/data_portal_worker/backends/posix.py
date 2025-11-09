@@ -1,8 +1,10 @@
-"""Load data from a posix file system."""
+"""Load data."""
 
 from pathlib import Path
 from typing import Optional, Union
+from urllib.parse import urlparse
 
+import h5netcdf
 import netCDF4
 import rasterio
 import xarray as xr
@@ -41,18 +43,26 @@ def get_xr_engine(file_path: str) -> Optional[str]:
     except Exception:
         pass
 
+    try:
+        with h5netcdf.File(file_path, mode="r"):
+            return "h5netcdf"
+    except Exception:
+        pass
+
     return None
 
 
-def load_posix(inp_file: Union[str, Path]) -> xr.Dataset:
+def posix_and_cloud(inp_file: Union[str, Path]) -> xr.Dataset:
     """Open a dataset with xarray."""
-    inp_file = Path(inp_file)
+    parsed = urlparse(inp_file)
+    target: Union[str, Path]
+    target = Path(inp_file) if parsed.scheme in ("", "file") else str(inp_file)
     return xr.open_dataset(
-        inp_file,
+        target,
         decode_cf=False,
         use_cftime=False,
         chunks="auto",
         cache=False,
         decode_coords=False,
-        engine=get_xr_engine(str(inp_file)),
+        engine=get_xr_engine(str(target)),
     )
