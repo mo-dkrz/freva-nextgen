@@ -19,6 +19,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.X"
+      - name: Install system GDAL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gdal-bin libgdal-dev
       - name: Install dependencies
         run: |
           python3 -m pip install -e ./freva-rest[dev] -e ./freva-data-portal-worker[full]
