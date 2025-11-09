@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import Optional, Union
 from urllib.parse import urlparse
-
+import h5netcdf
 import netCDF4
 import rasterio
 import xarray as xr
@@ -41,6 +41,8 @@ def get_xr_engine(file_path: str) -> Optional[str]:
             return "rasterio"
     except Exception:
         pass
+
+    print(f" file patj : {file_path}")
 
     return None
 
