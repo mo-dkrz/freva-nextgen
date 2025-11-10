@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Optional, Union
 from urllib.parse import urlparse
+
 import h5netcdf
 import netCDF4
 import rasterio
@@ -42,21 +43,27 @@ def get_xr_engine(file_path: str) -> Optional[str]:
     except Exception:
         pass
 
-    print(f" file patj : {file_path}")
+    try:
+        with h5netcdf.File(file_path, mode="r"):
+            return "h5netcdf"
+    except Exception:
+        pass
 
     return None
 
 
 def posix_and_cloud(inp_file: Union[str, Path]) -> xr.Dataset:
     """Open a dataset with xarray."""
-    parsed = urlparse(inp_file)
+    inp_str = str(inp_file)
+    parsed = urlparse(inp_str)
     target: Union[str, Path]
-    target = Path(inp_file) if parsed.scheme in ("", "file") else str(inp_file)
+    target = Path(inp_str) if parsed.scheme in ("", "file") else inp_str
+    engine = get_xr_engine(str(target))
     return xr.open_dataset(
         target,
         decode_cf=False,
         use_cftime=False,
-        chunks="auto",
+        chunks="auto"
         cache=False,
         decode_coords=False,
         engine=get_xr_engine(str(target)),
