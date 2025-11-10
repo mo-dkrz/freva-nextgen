@@ -63,7 +63,7 @@ def posix_and_cloud(inp_file: Union[str, Path]) -> xr.Dataset:
         target,
         decode_cf=False,
         use_cftime=False,
-        chunks="auto"
+        chunks="auto",
         cache=False,
         decode_coords=False,
         engine=get_xr_engine(str(target)),
